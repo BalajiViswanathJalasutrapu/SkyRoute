@@ -1,0 +1,219 @@
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.backBtn {
+  margin-bottom: 1.25rem;
+}
+
+/* ── Flight summary card ── */
+.summary {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.provider {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #2563eb;
+}
+
+.flightNumber {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.cabin {
+  margin-left: auto;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  background: #f1f5f9;
+  border-radius: 999px;
+  color: #475569;
+}
+
+.summaryRoute {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.routePoint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.time {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.airport {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.routeMid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.duration {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.routeLine {
+  width: 100%;
+  height: 1px;
+  background: #cbd5e1;
+}
+
+.summaryFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.totalPrice {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.perPerson {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* ── Booking form ── */
+.form {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.field input {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  background: #fff;
+}
+
+.field input.inputError {
+  border-color: #f87171;
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  color: #dc2626;
+}
+
+.hint {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.submitBtn {
+  align-self: flex-end;
+}
+
+.error {
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* ── Confirmation ── */
+.confirmation {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.confirmIcon {
+  font-size: 2.5rem;
+}
+
+.confirmTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.bookingRef {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+}
+
+.confirmDetails {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.searchAgainBtn {
+  margin-top: 0.5rem;
+}

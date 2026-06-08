@@ -8,11 +8,13 @@ namespace SkyRoute.Server.Infrastructure.Repositories
     public class InMemoryBookingRepository : IBookingRepository
     {
         private readonly IMemoryCache _cache;
+        private readonly ILogger<InMemoryBookingRepository> _logger;
         private readonly ConcurrentDictionary<string, BookingRecord> _bookings = new();
 
-        public InMemoryBookingRepository(IMemoryCache cache)
+        public InMemoryBookingRepository(IMemoryCache cache, ILogger<InMemoryBookingRepository> logger)
         {
             _cache = cache;
+            _logger = logger;
         }
 
         public Task<BookingRecord> CreateBookingAsync(BookingRequest request, decimal totalFare)
@@ -37,6 +39,10 @@ namespace SkyRoute.Server.Infrastructure.Repositories
             );
 
             _bookings[record.BookingReference] = record;
+
+            _logger.LogInformation("Booking {BookingReference} stored: {Origin} -> {Destination}, {CabinClass}, {PassengerCount} passenger(s), total {TotalPrice:C}",
+                record.BookingReference, record.Origin, record.Destination,
+                record.CabinClass, record.PassengerCount, record.TotalPrice);
 
             return Task.FromResult(record);
         }
