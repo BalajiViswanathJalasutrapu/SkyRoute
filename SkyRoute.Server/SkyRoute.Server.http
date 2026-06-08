@@ -1,0 +1,6 @@
+@SkyRoute.Server_HostAddress = http://localhost:5037
+
+GET {{SkyRoute.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

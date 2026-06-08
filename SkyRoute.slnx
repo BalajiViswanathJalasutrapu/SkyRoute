@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="skyroute.client/skyroute.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="SkyRoute.Server/SkyRoute.Server.csproj" />
+</Solution>
