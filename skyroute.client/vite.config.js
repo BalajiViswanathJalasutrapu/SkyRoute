@@ -43,12 +43,13 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
-            '@styles': path.resolve(__dirname, 'src/styles'),
+            '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
+            '@core': fileURLToPath(new URL('./src/core', import.meta.url))
         }
     },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '^/api': {
                 target,
                 secure: false
             }

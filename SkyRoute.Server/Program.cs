@@ -1,5 +1,6 @@
 using SkyRoute.Server.Core.Interfaces;
 using SkyRoute.Server.Infrastructure.Aggregators;
+using SkyRoute.Server.Infrastructure.Handlers;
 using SkyRoute.Server.Infrastructure.Providers;
 using SkyRoute.Server.Infrastructure.Repositories;
 
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddMemoryCache();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<IFlightProvider, GlobalAirProvider>();
 builder.Services.AddScoped<IFlightProvider, BudgetWingsProvider>();
@@ -21,6 +24,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 

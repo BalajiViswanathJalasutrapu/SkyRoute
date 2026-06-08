@@ -1,0 +1,209 @@
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* ── Search form ── */
+.form {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 120px;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.field select,
+.field input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #1e293b;
+}
+
+.searchBtn {
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+/* ── Feedback states ── */
+.error {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.empty {
+  margin-top: 2rem;
+  text-align: center;
+  color: #64748b;
+  padding: 2rem;
+  font-size: 0.95rem;
+}
+
+/* ── Results ── */
+.results {
+  margin-top: 1.5rem;
+}
+
+.sortBar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.sortLabel {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.resultCount {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.resultList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Flight card ── */
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.provider {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #2563eb;
+}
+
+.flightNumber {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.cabin {
+  margin-left: auto;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  background: #f1f5f9;
+  border-radius: 999px;
+  color: #475569;
+}
+
+.cardRoute {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.routePoint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.time {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.airport {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.routeMid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.duration {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.routeLine {
+  width: 100%;
+  height: 1px;
+  background: #cbd5e1;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.totalPrice {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.perPerson {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
