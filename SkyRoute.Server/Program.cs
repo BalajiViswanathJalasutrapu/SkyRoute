@@ -3,6 +3,8 @@ using SkyRoute.Server.Infrastructure.Aggregators;
 using SkyRoute.Server.Infrastructure.Handlers;
 using SkyRoute.Server.Infrastructure.Providers;
 using SkyRoute.Server.Infrastructure.Repositories;
+using SkyRoute.Server.Infrastructure.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +17,9 @@ builder.Services.AddProblemDetails();
 builder.Services.AddScoped<IFlightProvider, GlobalAirProvider>();
 builder.Services.AddScoped<IFlightProvider, BudgetWingsProvider>();
 builder.Services.AddScoped<IFlightAggregator, FlightAggregator>();
+builder.Services.AddScoped<IFlightSearchService, FlightSearchService>();
 builder.Services.AddSingleton<IBookingRepository, InMemoryBookingRepository>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -44,3 +48,5 @@ app.MapControllers();
 app.MapFallbackToFile("/index.html");
 
 app.Run();
+
+public partial class Program { }

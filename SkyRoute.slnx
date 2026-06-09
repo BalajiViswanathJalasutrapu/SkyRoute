@@ -1,4 +1,7 @@
 <Solution>
+  <Project Path="../skyroute.Server.Tests/skyroute.Server.Tests.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="skyroute.client/skyroute.client.esproj">
     <Build />
     <Deploy />

@@ -11,7 +11,7 @@ export function useFlightBooking() {
     setBooking(null);
 
     try {
-      const response = await fetch('/api/flights/book', {
+      const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ flightId, cabinClass, passengerCount, leadPassenger }),

@@ -4,7 +4,7 @@ namespace SkyRoute.Server.Core.Interfaces
 {
     public interface IBookingRepository
     {
-        Task<BookingRecord> CreateBookingAsync(BookingRequest request, decimal totalFare);
-        Task<BookingRecord?> GetBookingByIdAsync(string bookingId);
+        Task SaveAsync(BookingRecord record);
+        Task<BookingRecord?> GetByReferenceAsync(string bookingReference);
     }
 }
