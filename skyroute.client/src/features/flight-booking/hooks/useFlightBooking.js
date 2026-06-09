@@ -5,7 +5,7 @@ export function useFlightBooking() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
 
-  const book = useCallback(async ({ flightId, cabinClass, passengerCount, leadPassenger }) => {
+  const book = useCallback(async ({ flightId, cabinClass, leadPassenger, additionalPassengers }) => {
     setLoading(true);
     setError(null);
     setBooking(null);
@@ -14,7 +14,7 @@ export function useFlightBooking() {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ flightId, cabinClass, passengerCount, leadPassenger }),
+        body: JSON.stringify({ flightId, cabinClass, leadPassenger, additionalPassengers }),
       });
 
       if (!response.ok) {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFlightBooking } from '../hooks/useFlightBooking';
 import Button from '@core/components/Button';
+import PassengerFormSection from '@core/components/PassengerFormSection';
 import styles from '@styles/flight-booking.module.css';
 
 const DOCUMENT_CONFIG = {
@@ -24,43 +25,81 @@ function formatDuration(minutes) {
 function BookingForm({ flight, onBack }) {
   const { booking, loading, error, book } = useFlightBooking();
 
-  const docConfig = flight.isDomestic ? DOCUMENT_CONFIG.domestic : DOCUMENT_CONFIG.international;
+  const docConfig      = flight.isDomestic ? DOCUMENT_CONFIG.domestic : DOCUMENT_CONFIG.international;
+  const additionalCount = (flight.passengerCount ?? 1) - 1;
 
-  const [form, setForm] = useState({ fullName: '', email: '', documentNumber: '' });
-  const [fieldErrors, setFieldErrors] = useState({});
+  const [leadForm, setLeadForm] = useState({ fullName: '', email: '', documentNumber: '' });
+  const [additionalForms, setAdditionalForms] = useState(
+    () => Array.from({ length: additionalCount }, () => ({ fullName: '', documentNumber: '' }))
+  );
+  const [leadErrors, setLeadErrors] = useState({});
+  const [additionalErrors, setAdditionalErrors] = useState(
+    () => Array.from({ length: additionalCount }, () => ({}))
+  );
 
-  function handleChange(e) {
+  function handleLeadChange(e) {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: null }));
+    setLeadForm(prev => ({ ...prev, [name]: value }));
+    if (leadErrors[name]) setLeadErrors(prev => ({ ...prev, [name]: null }));
   }
 
-  function validate() {
+  function handleAdditionalChange(index, field, value) {
+    setAdditionalForms(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
+    if (additionalErrors[index]?.[field]) {
+      setAdditionalErrors(prev => prev.map((e, i) => i === index ? { ...e, [field]: null } : e));
+    }
+  }
+
+  function validateLead() {
     const errors = {};
-    if (!form.fullName.trim())               errors.fullName = 'Full name is required.';
-    else if (form.fullName.length > 100)     errors.fullName = 'Full name must be 100 characters or fewer.';
-    if (!form.email.trim())                  errors.email = 'Email is required.';
-    else if (!EMAIL_PATTERN.test(form.email)) errors.email = 'Enter a valid email address.';
-    if (!form.documentNumber.trim())         errors.documentNumber = `${docConfig.label} is required.`;
-    else if (!docConfig.pattern.test(form.documentNumber.toUpperCase()))
+    if (!leadForm.fullName.trim())                errors.fullName = 'Full name is required.';
+    else if (leadForm.fullName.length > 100)      errors.fullName = 'Full name must be 100 characters or fewer.';
+    if (!leadForm.email.trim())                   errors.email = 'Email is required.';
+    else if (!EMAIL_PATTERN.test(leadForm.email)) errors.email = 'Enter a valid email address.';
+    if (!leadForm.documentNumber.trim())          errors.documentNumber = `${docConfig.label} is required.`;
+    else if (!docConfig.pattern.test(leadForm.documentNumber.toUpperCase()))
       errors.documentNumber = `Invalid ${docConfig.label}. ${docConfig.hint}.`;
     return errors;
   }
 
+  function validateAdditional() {
+    return additionalForms.map(p => {
+      const errors = {};
+      if (!p.fullName.trim())            errors.fullName = 'Full name is required.';
+      else if (p.fullName.length > 100)  errors.fullName = 'Full name must be 100 characters or fewer.';
+      if (!p.documentNumber.trim())      errors.documentNumber = `${docConfig.label} is required.`;
+      else if (!docConfig.pattern.test(p.documentNumber.toUpperCase()))
+        errors.documentNumber = `Invalid ${docConfig.label}. ${docConfig.hint}.`;
+      return errors;
+    });
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    const errors = validate();
-    if (Object.keys(errors).length > 0) { setFieldErrors(errors); return; }
+
+    const newLeadErrors       = validateLead();
+    const newAdditionalErrors = validateAdditional();
+    const hasLeadErrors       = Object.keys(newLeadErrors).length > 0;
+    const hasAdditionalErrors = newAdditionalErrors.some(e => Object.keys(e).length > 0);
+
+    if (hasLeadErrors || hasAdditionalErrors) {
+      setLeadErrors(newLeadErrors);
+      setAdditionalErrors(newAdditionalErrors);
+      return;
+    }
 
     book({
-      flightId:       flight.flightId,
-      cabinClass:     flight.cabinClass,
-      passengerCount: flight.passengerCount ?? 1,
+      flightId:   flight.flightId,
+      cabinClass: flight.cabinClass,
       leadPassenger: {
-        fullName:       form.fullName.trim(),
-        email:          form.email.trim(),
-        documentNumber: form.documentNumber.trim().toUpperCase(),
+        fullName:       leadForm.fullName.trim(),
+        email:          leadForm.email.trim(),
+        documentNumber: leadForm.documentNumber.trim().toUpperCase(),
       },
+      additionalPassengers: additionalForms.map(p => ({
+        fullName:       p.fullName.trim(),
+        documentNumber: p.documentNumber.trim().toUpperCase(),
+      })),
     });
   }
 
@@ -75,7 +114,7 @@ function BookingForm({ flight, onBack }) {
             {booking.origin} → {booking.destination}<br />
             {formatTime(booking.departureTime)} · {booking.cabinClass}<br />
             {booking.passengerCount} passenger{booking.passengerCount !== 1 ? 's' : ''} · ${booking.totalPrice.toFixed(2)} total<br />
-            Confirmation sent to {booking.leadPassengerEmail}
+            Confirmation sent to {booking.leadPassenger.email}
           </p>
           <Button onClick={onBack} className={styles.searchAgainBtn}>
             Search Again
@@ -122,48 +161,70 @@ function BookingForm({ flight, onBack }) {
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
         <h2 className={styles.formTitle}>Passenger Details</h2>
 
-        <label className={styles.field}>
-          <span className={styles.label}>Full Name</span>
-          <input
-            type="text"
-            name="fullName"
-            value={form.fullName}
-            onChange={handleChange}
-            maxLength={100}
-            placeholder="As it appears on your document"
-            className={fieldErrors.fullName ? styles.inputError : ''}
-          />
-          {fieldErrors.fullName && <span className={styles.fieldError}>{fieldErrors.fullName}</span>}
-        </label>
+        {/* ── Lead passenger ── */}
+        <div className={styles.passengerSection}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionTitle}>Lead Passenger</span>
+            <span className={styles.sectionBadge}>Primary</span>
+          </div>
 
-        <label className={styles.field}>
-          <span className={styles.label}>Email</span>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Confirmation will be sent here"
-            className={fieldErrors.email ? styles.inputError : ''}
-          />
-          {fieldErrors.email && <span className={styles.fieldError}>{fieldErrors.email}</span>}
-        </label>
+          <label className={styles.field}>
+            <span className={styles.label}>Full Name</span>
+            <input
+              type="text"
+              name="fullName"
+              value={leadForm.fullName}
+              onChange={handleLeadChange}
+              maxLength={100}
+              placeholder="As it appears on your document"
+              className={leadErrors.fullName ? styles.inputError : ''}
+            />
+            {leadErrors.fullName && <span className={styles.fieldError}>{leadErrors.fullName}</span>}
+          </label>
 
-        <label className={styles.field}>
-          <span className={styles.label}>{docConfig.label}</span>
-          <input
-            type="text"
-            name="documentNumber"
-            value={form.documentNumber}
-            onChange={handleChange}
-            placeholder={docConfig.hint}
-            className={fieldErrors.documentNumber ? styles.inputError : ''}
-          />
-          {fieldErrors.documentNumber
-            ? <span className={styles.fieldError}>{fieldErrors.documentNumber}</span>
-            : <span className={styles.hint}>{docConfig.hint}</span>
-          }
-        </label>
+          <label className={styles.field}>
+            <span className={styles.label}>Email</span>
+            <input
+              type="email"
+              name="email"
+              value={leadForm.email}
+              onChange={handleLeadChange}
+              placeholder="Confirmation will be sent here"
+              className={leadErrors.email ? styles.inputError : ''}
+            />
+            {leadErrors.email && <span className={styles.fieldError}>{leadErrors.email}</span>}
+          </label>
+
+          <label className={styles.field}>
+            <span className={styles.label}>{docConfig.label}</span>
+            <input
+              type="text"
+              name="documentNumber"
+              value={leadForm.documentNumber}
+              onChange={handleLeadChange}
+              placeholder={docConfig.hint}
+              className={leadErrors.documentNumber ? styles.inputError : ''}
+            />
+            {leadErrors.documentNumber
+              ? <span className={styles.fieldError}>{leadErrors.documentNumber}</span>
+              : <span className={styles.hint}>{docConfig.hint}</span>
+            }
+          </label>
+        </div>
+
+        {/* ── Additional passengers ── */}
+        {additionalForms.map((passenger, index) => (
+          <div key={index}>
+            <div className={styles.sectionDivider} />
+            <PassengerFormSection
+              title={`Passenger ${index + 2}`}
+              value={passenger}
+              errors={additionalErrors[index]}
+              onChange={(field, value) => handleAdditionalChange(index, field, value)}
+              docConfig={docConfig}
+            />
+          </div>
+        ))}
 
         {error && <p className={styles.error}>{error}</p>}
 

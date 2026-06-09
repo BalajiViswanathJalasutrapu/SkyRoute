@@ -5,15 +5,17 @@ import { createOkResponse, createErrorResponse, createNetworkError } from '../..
 const defaultRequest = {
   flightId: 'flt-1',
   cabinClass: 'Economy',
-  passengerCount: 2,
-  leadPassenger: { firstName: 'Jane', lastName: 'Doe', passportNumber: 'X1234567' },
+  leadPassenger: { fullName: 'Jane Doe', email: 'jane@example.com', documentNumber: 'AB123456' },
+  additionalPassengers: [],
 };
 
 const bookingRecord = {
   bookingReference: 'BOOK0001',
   flightId: 'flt-1',
-  passengerCount: 2,
-  totalFare: 399.98,
+  passengerCount: 1,
+  totalPrice: 199.99,
+  leadPassenger: { fullName: 'Jane Doe', email: 'jane@example.com', documentNumber: 'AB123456' },
+  additionalPassengers: [],
 };
 
 beforeEach(() => {
@@ -76,7 +78,13 @@ describe('useFlightBooking — successful response', () => {
   });
 
   it('sets booking to the exact object returned by the API', async () => {
-    const customRecord = { bookingReference: 'CUSTOM01', flightId: 'flt-99', totalFare: 750.00 };
+    const customRecord = {
+      bookingReference: 'CUSTOM01',
+      flightId: 'flt-99',
+      totalPrice: 750.00,
+      leadPassenger: { fullName: 'John Custom', email: 'j@example.com', documentNumber: 'ZZ000001' },
+      additionalPassengers: [],
+    };
     global.fetch = jest.fn().mockResolvedValue(createOkResponse(customRecord));
 
     const { result } = renderHook(() => useFlightBooking());
@@ -101,7 +109,7 @@ describe('useFlightBooking — request format', () => {
     );
   });
 
-  it('serialises all booking parameters into the request body', async () => {
+  it('serialises leadPassenger and additionalPassengers into the request body', async () => {
     global.fetch = jest.fn().mockResolvedValue(createOkResponse(bookingRecord));
 
     const { result } = renderHook(() => useFlightBooking());
@@ -109,7 +117,34 @@ describe('useFlightBooking — request format', () => {
     await act(async () => { await result.current.book(defaultRequest); });
 
     const body = JSON.parse(global.fetch.mock.calls[0][1].body);
-    expect(body).toEqual(defaultRequest);
+    expect(body.flightId).toBe('flt-1');
+    expect(body.cabinClass).toBe('Economy');
+    expect(body.leadPassenger).toEqual(defaultRequest.leadPassenger);
+    expect(body.additionalPassengers).toEqual([]);
+    expect(body).not.toHaveProperty('passengerCount');
+  });
+
+  it('serialises additionalPassengers when multiple passengers provided', async () => {
+    global.fetch = jest.fn().mockResolvedValue(createOkResponse(bookingRecord));
+
+    const requestWithAdditional = {
+      flightId: 'flt-2',
+      cabinClass: 'Business',
+      leadPassenger: { fullName: 'Alice Lead', email: 'alice@example.com', documentNumber: 'P00000001' },
+      additionalPassengers: [
+        { fullName: 'Bob Extra', documentNumber: 'NID00001' },
+        { fullName: 'Carol Extra', documentNumber: 'NID00002' },
+      ],
+    };
+
+    const { result } = renderHook(() => useFlightBooking());
+
+    await act(async () => { await result.current.book(requestWithAdditional); });
+
+    const body = JSON.parse(global.fetch.mock.calls[0][1].body);
+    expect(body.additionalPassengers).toHaveLength(2);
+    expect(body.additionalPassengers[0]).toEqual({ fullName: 'Bob Extra', documentNumber: 'NID00001' });
+    expect(body.additionalPassengers[1]).toEqual({ fullName: 'Carol Extra', documentNumber: 'NID00002' });
   });
 });
 

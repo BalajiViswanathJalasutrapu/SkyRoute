@@ -15,30 +15,31 @@ public class BookingService(IMemoryCache cache, IBookingRepository repository, I
             throw new NotFoundException($"Flight '{request.FlightId}' not found. Search results may have expired.");
         }
 
-        decimal totalFare = Math.Round(flight.PricePerPerson * request.PassengerCount, 2);
+        int passengerCount = request.PassengerCount;
+        decimal totalFare = Math.Round(flight.PricePerPerson * passengerCount, 2);
 
         var record = new BookingRecord(
-            BookingReference:   GenerateBookingReference(),
-            FlightId:           request.FlightId,
-            ProviderName:       flight.ProviderName,
-            Origin:             flight.Origin,
-            Destination:        flight.Destination,
-            DepartureTime:      flight.DepartureTime,
-            ArrivalTime:        flight.ArrivalTime,
-            CabinClass:         request.CabinClass,
-            IsDomestic:         flight.IsDomestic,
-            PricePerPerson:     flight.PricePerPerson,
-            PassengerCount:     request.PassengerCount,
-            TotalPrice:         totalFare,
-            LeadPassengerName:  request.LeadPassenger.FullName,
-            LeadPassengerEmail: request.LeadPassenger.Email
+            BookingReference:     GenerateBookingReference(),
+            FlightId:             request.FlightId,
+            ProviderName:         flight.ProviderName,
+            Origin:               flight.Origin,
+            Destination:          flight.Destination,
+            DepartureTime:        flight.DepartureTime,
+            ArrivalTime:          flight.ArrivalTime,
+            CabinClass:           request.CabinClass,
+            IsDomestic:           flight.IsDomestic,
+            PricePerPerson:       flight.PricePerPerson,
+            PassengerCount:       passengerCount,
+            TotalPrice:           totalFare,
+            LeadPassenger:        request.LeadPassenger,
+            AdditionalPassengers: request.AdditionalPassengers
         );
 
         await repository.SaveAsync(record);
 
-        logger.LogInformation("Booking {BookingReference} created: {Origin} -> {Destination}, {CabinClass}, {PassengerCount} passenger(s), total {TotalPrice:C}",
+        logger.LogInformation("Booking {BookingReference} created: {Origin} -> {Destination}, {CabinClass}, {PassengerCount} passenger(s), lead {LeadPassengerEmail}, total {TotalPrice:C}",
             record.BookingReference, record.Origin, record.Destination,
-            record.CabinClass, record.PassengerCount, record.TotalPrice);
+            record.CabinClass, record.PassengerCount, record.LeadPassenger.Email, record.TotalPrice);
 
         return record;
     }
